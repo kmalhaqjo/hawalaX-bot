@@ -63,5 +63,4 @@ def main():
     print("🚀 HawalaX Bot شروع به کار کرد!")
     app.run_polling()
 
-if name == "__main__":
-    main()
+if name == "__main__":    main()
