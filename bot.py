@@ -60,8 +60,8 @@ def main():
     # Messages
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, message_handler))
 
-    print("🚀 HawalaX Bot شروع به کار کرد!")
-app.run_polling()
+   print("🚀 HawalaX Bot شروع به کار کرد!")
+    app.run_polling()  # ← 4 فاصله indent
 
 if name == "__main__":
     main()
