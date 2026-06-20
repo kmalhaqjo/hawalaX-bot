@@ -16,7 +16,7 @@ import json, os
 # ═══════════════════════════════════════════
 # CONFIG — اینجا مقادیر را وارد کنید
 # ═══════════════════════════════════════════
-BOT_TOKEN    = "8505234732:AAEVa3i8Dr1B-VAT6LzcBHthas2XzNEEuPc"
+BOT_TOKEN    = "8505234732:AAEHC6XlFMqW5eEFx78GC4mOn_QnM64gS28"
 CHANNEL_ID   = -1004437820092
 ADMIN_IDS    = [909200283]
 
