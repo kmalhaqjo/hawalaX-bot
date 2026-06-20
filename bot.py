@@ -4,7 +4,9 @@ HawalaX Telegram Bot
 BakarExchange — صرافی حاجی کمال حقجو
 """
 
+import asyncio
 import logging
+import signal
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application, CommandHandler, MessageHandler,
@@ -515,7 +517,7 @@ async def _save_usdt(update, ctx, uid, d):
 # ═══════════════════════════════════════════
 # MAIN
 # ═══════════════════════════════════════════
-def main():
+async def run_bot():
     load_store()
     logger.info("🚀 Starting HawalaX Bot...")
 
@@ -529,11 +531,30 @@ def main():
 
     app.add_handler(CallbackQueryHandler(callback_form,  pattern="^(cur_|par_|net_)"))
     app.add_handler(CallbackQueryHandler(button_handler))
-
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, message_handler))
 
-    logger.info("✅ HawalaX Bot is running! (polling)")
-    app.run_polling()
+    async with app:
+        await app.start()
+        await app.updater.start_polling(drop_pending_updates=True)
+        logger.info("✅ HawalaX Bot is running! (polling)")
+
+        # Wait forever (until SIGTERM/SIGINT from Railway)
+        stop = asyncio.Event()
+        loop = asyncio.get_running_loop()
+        for sig in (signal.SIGTERM, signal.SIGINT):
+            try:
+                loop.add_signal_handler(sig, stop.set)
+            except NotImplementedError:
+                pass  # Windows fallback — not needed on Railway
+
+        await stop.wait()
+        logger.info("🛑 Shutdown signal received — stopping bot...")
+        await app.updater.stop()
+        await app.stop()
+
+
+def main():
+    asyncio.run(run_bot())
 
 
 if __name__ == "__main__":
