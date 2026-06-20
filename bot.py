@@ -538,4 +538,4 @@ def main():
     app.run_polling()
 
 if name == "__main__":
-
+    main()
