@@ -14,14 +14,37 @@ from datetime import datetime
 import json, os
 
 # ═══════════════════════════════════════════
+# LOGGING
+# ═══════════════════════════════════════════
+logging.basicConfig(
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    level=logging.INFO
+)
+logger = logging.getLogger(__name__)
+
+# ═══════════════════════════════════════════
 # CONFIG — مقادیر از environment variables خوانده می‌شوند
 # ═══════════════════════════════════════════
-BOT_TOKEN  = os.getenv("BOT_TOKEN")
-CHANNEL_ID = int(os.getenv("CHANNEL_ID", "0"))
-ADMIN_IDS  = [909200283]
+BOT_TOKEN = os.getenv("BOT_TOKEN", "").strip().strip('"').strip("'")
+
+_channel_raw = os.getenv("CHANNEL_ID", "").strip().strip('"').strip("'").strip()
+try:
+    CHANNEL_ID = int(_channel_raw) if _channel_raw else 0
+except ValueError:
+    logger.error(f"❌ CHANNEL_ID must be a number, got: '{_channel_raw}'")
+    raise RuntimeError(f"CHANNEL_ID must be a number, got: '{_channel_raw}'")
+
+ADMIN_IDS = [909200283]
 
 if not BOT_TOKEN:
+    logger.error("❌ BOT_TOKEN is not set. Add it in Railway environment variables.")
     raise RuntimeError("BOT_TOKEN environment variable is not set!")
+if not CHANNEL_ID:
+    logger.error("❌ CHANNEL_ID is not set. Add it in Railway environment variables.")
+    raise RuntimeError("CHANNEL_ID environment variable is not set!")
+
+logger.info(f"✅ BOT_TOKEN loaded (ends: ...{BOT_TOKEN[-6:]})")
+logger.info(f"✅ CHANNEL_ID loaded: {CHANNEL_ID}")
 
 # ═══════════════════════════════════════════
 # DATA STORE — در production از دیتابیس استفاده شود
@@ -494,7 +517,7 @@ async def _save_usdt(update, ctx, uid, d):
 # ═══════════════════════════════════════════
 def main():
     load_store()
-    logging.basicConfig(level=logging.INFO)
+    logger.info("🚀 Starting HawalaX Bot...")
 
     app = Application.builder().token(BOT_TOKEN).build()
 
@@ -509,7 +532,7 @@ def main():
 
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, message_handler))
 
-    print("🚀 HawalaX Bot شروع به کار کرد!")
+    logger.info("✅ HawalaX Bot is running! (polling)")
     app.run_polling()
 
 
