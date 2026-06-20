@@ -14,11 +14,14 @@ from datetime import datetime
 import json, os
 
 # ═══════════════════════════════════════════
-# CONFIG — اینجا مقادیر را وارد کنید
+# CONFIG — مقادیر از environment variables خوانده می‌شوند
 # ═══════════════════════════════════════════
-BOT_TOKEN    = os.getenv("BOT_TOKEN", "8505234732:AAEHC6XlFMqW5eEFx78GC4mOn_QnM64gS28")
-CHANNEL_ID   = int(os.getenv("CHANNEL_ID", "-1004437820092"))
-ADMIN_IDS    = [909200283]
+BOT_TOKEN  = os.getenv("BOT_TOKEN")
+CHANNEL_ID = int(os.getenv("CHANNEL_ID", "0"))
+ADMIN_IDS  = [909200283]
+
+if not BOT_TOKEN:
+    raise RuntimeError("BOT_TOKEN environment variable is not set!")
 
 # ═══════════════════════════════════════════
 # DATA STORE — در production از دیتابیس استفاده شود
